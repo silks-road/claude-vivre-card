@@ -336,11 +336,14 @@ func buildDesktopDeepLinkArgs(title, message, sessionID string, clickToFocus boo
 	if !clickToFocus || !platform.IsDesktopSession() || !sessionUUIDPattern.MatchString(sessionID) {
 		return nil
 	}
-	appSessionID := resolveDesktopSessionID(sessionID)
-	if appSessionID == "" {
-		return nil
-	}
-	executeCmd := "open " + shellQuote("claude:///cowork/"+appSessionID)
+	// Navigating to the exact conversation is currently blocked by the app:
+	// the renderer ignores externally-injected routes (/cowork/<id>,
+	// /epitaxy/<id>, claude.ai-host paths all no-op) and the only public
+	// session deep link, claude://resume, IMPORTS a duplicate mirror instead
+	// of focusing the existing conversation. Until the desktop app exposes an
+	// open-session deep link, the best correct behavior is app activation.
+	// resolveDesktopSessionID is kept for that future deep link.
+	executeCmd := "open -b " + shellQuote(platform.DesktopAppBundleID)
 	return []string{
 		"-title", title,
 		"-message", message,

@@ -90,35 +90,23 @@ func TestResolveDesktopSessionID(t *testing.T) {
 }
 
 func TestBuildDesktopDeepLinkArgs(t *testing.T) {
-	t.Run("desktop session builds cowork route deep link", func(t *testing.T) {
+	t.Run("desktop session builds app activation click", func(t *testing.T) {
 		desktopEnv(t)
-		root := withSessionsDir(t)
-		writeSessionRecord(t, root, testAppSessionID, testCLISessionID, false, 100)
 
 		args := buildDesktopDeepLinkArgs("✅ Completed", "done", testCLISessionID, true)
 		if args == nil {
 			t.Fatal("expected args, got nil")
 		}
 		joined := strings.Join(args, " ")
-		want := "open 'claude:///cowork/" + testAppSessionID + "'"
+		want := "open -b 'com.anthropic.claudefordesktop'"
 		if !strings.Contains(joined, want) {
-			t.Errorf("args missing deep link execute command %q: %s", want, joined)
-		}
-	})
-
-	t.Run("unresolvable session returns nil", func(t *testing.T) {
-		desktopEnv(t)
-		withSessionsDir(t)
-		if args := buildDesktopDeepLinkArgs("t", "m", testCLISessionID, true); args != nil {
-			t.Errorf("expected nil when no session record exists, got %v", args)
+			t.Errorf("args missing activation execute command %q: %s", want, joined)
 		}
 	})
 
 	t.Run("cli session returns nil", func(t *testing.T) {
 		t.Setenv("CLAUDE_CODE_ENTRYPOINT", "cli")
 		t.Setenv("__CFBundleIdentifier", "")
-		root := withSessionsDir(t)
-		writeSessionRecord(t, root, testAppSessionID, testCLISessionID, false, 100)
 
 		if args := buildDesktopDeepLinkArgs("t", "m", testCLISessionID, true); args != nil {
 			t.Errorf("expected nil for cli session, got %v", args)
@@ -127,8 +115,6 @@ func TestBuildDesktopDeepLinkArgs(t *testing.T) {
 
 	t.Run("clickToFocus disabled returns nil", func(t *testing.T) {
 		desktopEnv(t)
-		root := withSessionsDir(t)
-		writeSessionRecord(t, root, testAppSessionID, testCLISessionID, false, 100)
 
 		if args := buildDesktopDeepLinkArgs("t", "m", testCLISessionID, false); args != nil {
 			t.Errorf("expected nil when clickToFocus disabled, got %v", args)
@@ -137,7 +123,6 @@ func TestBuildDesktopDeepLinkArgs(t *testing.T) {
 
 	t.Run("non-uuid session id returns nil", func(t *testing.T) {
 		desktopEnv(t)
-		withSessionsDir(t)
 		for _, id := range []string{"", "unknown", "local-debug", "abc'; rm -rf /"} {
 			if args := buildDesktopDeepLinkArgs("t", "m", id, true); args != nil {
 				t.Errorf("expected nil for session id %q, got %v", id, args)

@@ -12,7 +12,8 @@ const (
 	SourceUnknown SessionSource = "unknown"
 )
 
-const desktopBundleID = "com.anthropic.claudefordesktop"
+// DesktopAppBundleID is the macOS bundle identifier of the Claude desktop app.
+const DesktopAppBundleID = "com.anthropic.claudefordesktop"
 
 // GetSessionSource classifies the current session from environment variables
 // inherited from the Claude process that spawned the hook.
@@ -31,7 +32,7 @@ func GetSessionSource() SessionSource {
 		return SourceSDK
 	}
 
-	if os.Getenv("__CFBundleIdentifier") == desktopBundleID {
+	if os.Getenv("__CFBundleIdentifier") == DesktopAppBundleID {
 		return SourceDesktop
 	}
 
