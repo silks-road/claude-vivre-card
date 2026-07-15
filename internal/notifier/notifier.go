@@ -200,7 +200,7 @@ func (n *Notifier) sendWithTerminalNotifier(title, message, subtitle, sessionID 
 	var args []string
 	if deepLinkArgs := buildDesktopDeepLinkArgs(title, message, sessionID, clickToFocus); deepLinkArgs != nil {
 		args = deepLinkArgs
-		logging.Debug("Desktop app session detected, click opens claude://resume?session=%s", sessionID)
+		logging.Debug("Desktop app session detected, click navigates to conversation (cli session %s)", sessionID)
 	} else if muxArgs, muxName := detectMultiplexerArgs(title, message, bundleID); muxArgs != nil {
 		args = muxArgs
 		logging.Debug("%s detected, using multiplexer-specific -execute", muxName)
