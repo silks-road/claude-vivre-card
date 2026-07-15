@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"sync"
@@ -197,7 +198,10 @@ func (n *Notifier) sendWithTerminalNotifier(title, message, subtitle, sessionID 
 	}
 
 	var args []string
-	if muxArgs, muxName := detectMultiplexerArgs(title, message, bundleID); muxArgs != nil {
+	if deepLinkArgs := buildDesktopDeepLinkArgs(title, message, sessionID, clickToFocus); deepLinkArgs != nil {
+		args = deepLinkArgs
+		logging.Debug("Desktop app session detected, click opens claude://resume?session=%s", sessionID)
+	} else if muxArgs, muxName := detectMultiplexerArgs(title, message, bundleID); muxArgs != nil {
 		args = muxArgs
 		logging.Debug("%s detected, using multiplexer-specific -execute", muxName)
 	} else {
@@ -314,6 +318,35 @@ func claudeNotifierAppPath(notifierPath string) (string, bool) {
 	}
 
 	return bundlePath, true
+}
+
+// sessionUUIDPattern matches the session id format accepted by the desktop
+// app's claude://resume deep link handler (a standard UUID).
+var sessionUUIDPattern = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
+
+// buildDesktopDeepLinkArgs returns terminal-notifier args whose click action
+// navigates the Claude desktop app to the exact conversation that fired the
+// hook, via the app's internal /cowork/<id> route (claude:/// empty-host deep
+// links dispatch straight to the app router — no session import, unlike
+// claude://resume which creates a mirror copy). Returns nil when the hook was
+// not fired by a desktop (Cowork) session, click-to-focus is disabled, or the
+// session cannot be resolved — callers then fall through to terminal focusing
+// (which for desktop sessions degrades to app-level activation).
+func buildDesktopDeepLinkArgs(title, message, sessionID string, clickToFocus bool) []string {
+	if !clickToFocus || !platform.IsDesktopSession() || !sessionUUIDPattern.MatchString(sessionID) {
+		return nil
+	}
+	appSessionID := resolveDesktopSessionID(sessionID)
+	if appSessionID == "" {
+		return nil
+	}
+	executeCmd := "open " + shellQuote("claude:///cowork/"+appSessionID)
+	return []string{
+		"-title", title,
+		"-message", message,
+		"-execute", executeCmd,
+		"-group", fmt.Sprintf("claude-notif-%d", time.Now().UnixNano()),
+	}
 }
 
 // buildTerminalNotifierArgs constructs command-line arguments for terminal-notifier.
