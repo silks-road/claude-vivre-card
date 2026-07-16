@@ -88,3 +88,5 @@ build/
 .augment/rules/byterover-rules.md
 
 .build/
+# built binary (upstream ships a symlink here; never commit a real build)
+bin/claude-notifications
