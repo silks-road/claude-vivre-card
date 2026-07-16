@@ -37,7 +37,7 @@ CURL_EXTRA_OPTS=()
 CURL_COMPAT_OPTS=()
 
 # GitHub repository (can be overridden via env for testing)
-REPO="777genius/claude-notifications-go"
+REPO="silks-road/claude-notifications-everywhere"
 RELEASES_BASE_URL="${RELEASES_BASE_URL:-https://github.com/${REPO}/releases}"
 LATEST_RELEASE_API_URL="${LATEST_RELEASE_API_URL:-https://api.github.com/repos/${REPO}/releases/latest}"
 DEFAULT_RELEASE_URL="${RELEASES_BASE_URL}/latest/download"

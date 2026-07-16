@@ -47,26 +47,26 @@ Everything below is on top of the upstream plugin, which only knew about termina
 - **One-sentence summaries** — the body is the outcome sentence of Claude's reply (markdown stripped, capped ~110 chars), not a wall of raw text.
 - **Click opens the exact conversation** — not just the app. There is no public deep link for this (`claude://resume` *imports a duplicate* of the session — don't use it), so the plugin drives the app's UI through the macOS Accessibility API: activate app → switch Home/Code area if needed → press the conversation's sidebar item. Falls back to plain app activation if anything is missing, and launches the app if it isn't running.
 
-### Setup (macOS)
+### Setup (macOS) — no terminal or git needed
 
-1. **Build from source** (upstream's installer downloads upstream binaries, which lack these features):
-   ```bash
-   git clone https://github.com/silks-road/claude-notifications-everywhere.git
-   cd claude-notifications-go && make build
+Everything happens inside Claude Code or the Claude desktop app; the plugin downloads its own pre-built program (from this repo's [Releases](https://github.com/silks-road/claude-notifications-everywhere/releases)) the first time it runs.
+
+1. **Install the plugin** — type these two commands into any Claude chat input, one at a time:
    ```
-2. **Install as a plugin** — in Claude Code / the desktop app:
+   /plugin marketplace add silks-road/claude-notifications-everywhere
    ```
-   /plugin marketplace add /path/to/claude-notifications-go
+   ```
    /plugin install claude-notifications-go@claude-notifications-go
    ```
-   then copy the freshly built binary over the cached one whenever you rebuild:
-   ```bash
-   cp bin/claude-notifications ~/.claude/plugins/cache/claude-notifications-go/claude-notifications-go/*/bin/claude-notifications-darwin-arm64
-   ```
-3. **Grant permissions** (each once):
+2. **Grant permissions** (each once):
    - *System Settings → Notifications → Claude Notifier*: **Allow**, style **Alerts** (persistent).
    - *System Settings → Privacy & Security → Accessibility*: enable **ClaudeNotifier** — this is what lets a notification click press the right conversation in the sidebar. Until granted, clicks still focus the app.
    - Using Focus modes? Add both **Claude** and **Claude Notifier** to the allowed apps.
+
+3. *(Optional, for developers)* Building from source instead: clone the repo, `make build`, then copy `bin/claude-notifications` over the cached binary in `~/.claude/plugins/cache/claude-notifications-go/claude-notifications-go/<version>/bin/`.
+
+> **Prefer to delegate?** Paste this into a Claude Code / Cowork chat and let Claude do the whole thing:
+> *"Install the claude-notifications-everywhere plugin from github.com/silks-road/claude-notifications-everywhere: add its marketplace, install the plugin, then walk me through the macOS notification and accessibility permissions it needs."*
 
 ### How click-to-conversation works
 

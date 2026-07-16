@@ -1,6 +1,6 @@
 #!/bin/bash
 # bootstrap.sh - One-command install/update for claude-notifications plugin
-# Usage: curl -fsSL https://raw.githubusercontent.com/777genius/claude-notifications-go/main/bin/bootstrap.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/silks-road/claude-notifications-everywhere/main/bin/bootstrap.sh | bash
 
 set -euo pipefail
 
@@ -13,7 +13,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 # Constants
-REPO="777genius/claude-notifications-go"
+REPO="silks-road/claude-notifications-everywhere"
 MARKETPLACE_SOURCE="${BOOTSTRAP_MARKETPLACE_SOURCE:-$REPO}"
 MARKETPLACE_NAME="claude-notifications-go"
 PLUGIN_NAME="claude-notifications-go"
