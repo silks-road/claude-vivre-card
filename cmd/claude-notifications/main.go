@@ -68,6 +68,15 @@ func main() {
 		}
 	case "focus-windows":
 		runFocusWindows(os.Args[2:])
+	case "focus-session":
+		if len(os.Args) < 3 {
+			fmt.Fprintf(os.Stderr, "Error: focus-session requires a cli session id argument\n")
+			os.Exit(1)
+		}
+		if err := notifier.FocusDesktopSessionByCLIID(os.Args[2]); err != nil {
+			fmt.Fprintf(os.Stderr, "focus-session: %v\n", err)
+			os.Exit(1)
+		}
 	case "play-sound":
 		runPlaySound(os.Args[2:])
 	case "daemon", "--daemon":

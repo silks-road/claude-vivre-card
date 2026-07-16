@@ -95,7 +95,7 @@ func TestResolveDesktopSessionID(t *testing.T) {
 }
 
 func TestBuildDesktopDeepLinkArgs(t *testing.T) {
-	t.Run("desktop session builds app activation click", func(t *testing.T) {
+	t.Run("desktop session builds focus-session click", func(t *testing.T) {
 		desktopEnv(t)
 
 		args := buildDesktopDeepLinkArgs("✅ Completed", "done", testCLISessionID, true)
@@ -103,9 +103,9 @@ func TestBuildDesktopDeepLinkArgs(t *testing.T) {
 			t.Fatal("expected args, got nil")
 		}
 		joined := strings.Join(args, " ")
-		want := "open -b 'com.anthropic.claudefordesktop'"
+		want := " focus-session '" + testCLISessionID + "'"
 		if !strings.Contains(joined, want) {
-			t.Errorf("args missing activation execute command %q: %s", want, joined)
+			t.Errorf("args missing focus-session execute command %q: %s", want, joined)
 		}
 	})
 

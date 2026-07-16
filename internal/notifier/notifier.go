@@ -96,10 +96,20 @@ func (n *Notifier) SendDesktop(status analyzer.Status, message, sessionID, cwd s
 	// Format: "[session-name|branch folder] actual message" or "[session-name folder] actual message"
 	sessionName, gitBranch, cleanMessage := extractSessionInfo(message)
 
+	// Desktop (Cowork) sessions are identified by their conversation title
+	// from the app's own session records, shown in the subtitle below.
+	var convTitle string
+	if platform.IsDesktopSession() {
+		_, convTitle = resolveDesktopSession(sessionID)
+	}
+
 	// Build clean title (status only + session name)
 	// Format: "✅ Completed [peak]" or "✅ Completed"
+	// The generated session codename is dropped when the conversation title
+	// already identifies the chat — it is only meaningful for terminal
+	// sessions (tmux windows etc.).
 	title := statusInfo.Title
-	if sessionName != "" {
+	if sessionName != "" && convTitle == "" {
 		title = fmt.Sprintf("%s [%s]", title, sessionName)
 	}
 
@@ -117,15 +127,13 @@ func (n *Notifier) SendDesktop(status analyzer.Status, message, sessionID, cwd s
 	}
 
 	// Desktop (Cowork) sessions: lead the subtitle with the conversation title
-	// from the app's own session records, so the user can tell WHICH chat the
-	// notification is about when several are running at once.
-	if platform.IsDesktopSession() {
-		if _, convTitle := resolveDesktopSession(sessionID); convTitle != "" {
-			if subtitle != "" {
-				subtitle = fmt.Sprintf("%s \u00B7 %s", convTitle, subtitle)
-			} else {
-				subtitle = convTitle
-			}
+	// so the user can tell WHICH chat the notification is about when several
+	// are running at once.
+	if convTitle != "" {
+		if subtitle != "" {
+			subtitle = fmt.Sprintf("%s \u00B7 %s", convTitle, subtitle)
+		} else {
+			subtitle = convTitle
 		}
 	}
 
@@ -349,14 +357,18 @@ func buildDesktopDeepLinkArgs(title, message, sessionID string, clickToFocus boo
 	if !clickToFocus || !platform.IsDesktopSession() || !sessionUUIDPattern.MatchString(sessionID) {
 		return nil
 	}
-	// Navigating to the exact conversation is currently blocked by the app:
-	// the renderer ignores externally-injected routes (/cowork/<id>,
-	// /epitaxy/<id>, claude.ai-host paths all no-op) and the only public
-	// session deep link, claude://resume, IMPORTS a duplicate mirror instead
-	// of focusing the existing conversation. Until the desktop app exposes an
-	// open-session deep link, the best correct behavior is app activation.
-	// resolveDesktopSessionID is kept for that future deep link.
+	// The app exposes no deep link for focusing an existing conversation
+	// (claude://resume imports a duplicate; injected renderer routes are
+	// ignored), so clicks run the binary's focus-session subcommand: it
+	// activates the app and presses the conversation's sidebar item through
+	// the Accessibility API, degrading to plain app activation when the item
+	// or the AX permission is missing.
 	executeCmd := "open -b " + shellQuote(platform.DesktopAppBundleID)
+	if exe, err := os.Executable(); err == nil {
+		if exe, err = filepath.EvalSymlinks(exe); err == nil {
+			executeCmd = shellQuote(exe) + " focus-session " + shellQuote(sessionID)
+		}
+	}
 	return []string{
 		"-title", title,
 		"-message", message,
