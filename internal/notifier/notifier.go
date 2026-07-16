@@ -136,7 +136,7 @@ func (n *Notifier) SendDesktop(status analyzer.Status, message, sessionID, cwd s
 	// sentence.
 	if convTitle != "" {
 		subtitle = ""
-		cleanMessage = summarizeMessage(cleanMessage)
+		cleanMessage = summarizeMessage(cleanMessage, status)
 	}
 
 	timeSensitive := isTimeSensitiveStatus(status)
