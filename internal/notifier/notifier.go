@@ -106,12 +106,14 @@ func (n *Notifier) SendDesktop(status analyzer.Status, message, sessionID, cwd s
 
 	// Build clean title.
 	// Desktop sessions: "✅ Done — <conversation title>" (one glance says what
-	// happened and in which chat; the generated session codename is dropped).
+	// happened and in which chat). The generated session codename is never
+	// shown for desktop sessions — even when the conversation title cannot be
+	// resolved, "[gentle 6794614b]" is noise, not identity.
 	// Terminal sessions keep the codename format: "✅ Done [peak]".
 	title := statusInfo.Title
 	if convTitle != "" {
 		title = fmt.Sprintf("%s — %s", title, convTitle)
-	} else if sessionName != "" {
+	} else if sessionName != "" && !platform.IsDesktopSession() {
 		title = fmt.Sprintf("%s [%s]", title, sessionName)
 	}
 
