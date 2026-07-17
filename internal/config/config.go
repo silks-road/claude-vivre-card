@@ -217,7 +217,7 @@ func buildDefaultConfig(pluginRoot string) *Config {
 			},
 			// "needs you" = question.mp3
 			"question": {
-				Title: "❓ Needs you",
+				Title: "❓ Input needed",
 				Sound: filepath.Join(pluginRoot, "sounds", "question.mp3"),
 			},
 			"approval_needed": {

@@ -487,7 +487,7 @@ func TestGetDefaultMessage(t *testing.T) {
 		expected string
 	}{
 		{"task_complete", "Done"},
-		{"question", "Needs you"},
+		{"question", "Input needed"},
 		{"plan_ready", "Plan"},
 	}
 
@@ -702,7 +702,7 @@ func TestGenerateSimple(t *testing.T) {
 		expected string
 	}{
 		{analyzer.StatusTaskComplete, "Done"},
-		{analyzer.StatusQuestion, "Needs you"},
+		{analyzer.StatusQuestion, "Input needed"},
 		{analyzer.StatusPlanReady, "Plan"},
 		{analyzer.StatusReviewComplete, "Review"},
 		{analyzer.StatusSessionLimitReached, "Limit reached"},

@@ -655,7 +655,7 @@ func (h *Handler) generateMessage(hookData *HookData, status analyzer.Status, me
 
 	// Asking statuses on desktop sessions: the body must show what is being
 	// ASKED. The summary engine describes completed work ("Task 9 completed,
-	// four-sound scheme live"), which reads as a mismatch under a "Needs you"
+	// four-sound scheme live"), which reads as a mismatch under a "Input needed"
 	// title. Feed the raw final assistant message instead — the desktop
 	// notifier's summarization picks the question sentence — and drop the
 	// action segments (work stats are noise on a needs-you alert).

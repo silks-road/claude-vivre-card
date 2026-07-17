@@ -37,7 +37,7 @@ func isAskingStatus(status analyzer.Status) bool {
 // sentences, emoji removed — the title already carries the status emoji).
 // For asking statuses the LAST question sentence is picked, so a message that
 // reports work and then asks something shows the question, matching the
-// "Needs you" title. Otherwise the first sentence is used.
+// "Input needed" title. Otherwise the first sentence is used.
 func summarizeMessage(message string, status analyzer.Status) string {
 	s := message
 	s = codeFenceRe.ReplaceAllString(s, " ")

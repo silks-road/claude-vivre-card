@@ -1,18 +1,27 @@
 <h1 align="center">Claude Notifications Everywhere</h1>
-<p align="center"><i>Notifications from Claude Code wherever you are — terminal, desktop app (Cowork), phone, and (soon) browser.</i></p>
+<p align="center"><i>Notifications that don't just tell you Claude finished — they take you to the exact conversation, and let you act without opening it.</i></p>
 
 [![Ubuntu CI](https://github.com/silks-road/claude-notifications-everywhere/workflows/Ubuntu%20CI/badge.svg)](https://github.com/silks-road/claude-notifications-everywhere/actions)
 [![macOS CI](https://github.com/silks-road/claude-notifications-everywhere/workflows/macOS%20CI/badge.svg)](https://github.com/silks-road/claude-notifications-everywhere/actions)
 [![Windows CI](https://github.com/silks-road/claude-notifications-everywhere/workflows/Windows%20CI/badge.svg)](https://github.com/silks-road/claude-notifications-everywhere/actions)
 
-> **🖥️ This fork adds [Claude Desktop app (Cowork) support](#claude-desktop-cowork-support-this-fork)** — notifications from desktop app sessions, conversation names in every alert, and click-to-open-the-exact-conversation. Forked from [777genius/claude-notifications-go](https://github.com/777genius/claude-notifications-go).
-
 <p align="center">
   <img src="docs/images/cowork-notification.svg" width="560" alt="Notification: '✅ Done - Notifications plugin expansion' with a one-sentence summary"/><br/>
-  <img src="docs/images/cowork-question.svg" width="560" alt="Notification: '❓ Needs you - Irish Rail' asking which date range to use"/>
+  <img src="docs/images/cowork-question.svg" width="560" alt="Notification: '❓ Input needed - Irish Rail' asking which date range to use"/>
 </p>
 
-Smart notifications for Claude Code with click-to-focus, git branch display, and webhook integrations.
+## What this actually does
+
+You run Claude in several places — a terminal, the desktop app, a browser tab. Every one of them goes quiet while Claude works, and you move on to something else. This plugin makes sure the moment that matters reaches you, wherever you are, and gets you back to the right place in one click:
+
+- 🖥️ **Works on every surface** — terminal, **Claude desktop app (Cowork)**, **claude.ai in Chrome** (via the bundled [extension](extension/)), and **your phone** (via webhooks)
+- 🎯 **Click lands on the exact conversation** — not just the app: it selects the right chat in the desktop app's sidebar, or focuses the right browser tab (never opening duplicates, even with split views)
+- 🔐 **Approve without opening anything** — when Claude needs permission, the notification carries **"Always allow"** and **"Allow once"** buttons that answer the real request in the app
+- 🧠 **The alert tells you what and where** — `✅ Done - Irish Rail` when finished; `❓ Input needed - Irish Rail` *with the actual question as the message* when Claude is waiting on you
+- 🔊 **Four sounds you learn once** — *done* / *input needed* / *broke* / *approaching limit* — so your ears triage before your eyes do
+- 📊 **Warns before you hit usage limits** — from Claude's real warnings, honestly (no invented percentages)
+
+> Forked from [777genius/claude-notifications-go](https://github.com/777genius/claude-notifications-go), which built the terminal foundation — this fork adds the desktop app, browser, interactivity, and navigation layers. See [the fork section](#claude-desktop-cowork-support-this-fork) for details.
 
 > **Boost your productivity** — check out the [advanced task manager for Claude with a convenient UI](https://github.com/777genius/claude_agent_teams_ui), from the creator of this plugin.
 
@@ -218,7 +227,7 @@ What each one looks like (desktop app sessions show the conversation name; the �
 <table>
   <tr>
     <td><img src="docs/images/cowork-notification.svg" alt="✅ Done - task finished, one-sentence summary"/></td>
-    <td><img src="docs/images/cowork-question.svg" alt="❓ Needs you - Claude is waiting on your answer"/></td>
+    <td><img src="docs/images/cowork-question.svg" alt="❓ Input needed - Claude is waiting on your answer"/></td>
   </tr>
   <tr>
     <td><img src="docs/images/notif-approval.svg" alt="🔐 Needs approval - with Always allow and Allow once buttons"/></td>

@@ -31,7 +31,7 @@
    "sound": "${CLAUDE_PLUGIN_ROOT}/sounds/task-complete.mp3"
   },
   "question": {
-   "title": "❓ Needs you",
+   "title": "❓ Input needed",
    "sound": "${CLAUDE_PLUGIN_ROOT}/sounds/question.mp3"
   },
   "plan_ready": {
