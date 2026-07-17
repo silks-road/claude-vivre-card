@@ -6,8 +6,8 @@
 [![Windows CI](https://github.com/silks-road/claude-notifications-everywhere/workflows/Windows%20CI/badge.svg)](https://github.com/silks-road/claude-notifications-everywhere/actions)
 
 <p align="center">
-  <img src="docs/images/cowork-notification.svg" width="560" alt="Notification: '✅ Done - Wanted poster generator' with a one-sentence summary"/><br/>
-  <img src="docs/images/cowork-question.svg" width="560" alt="Notification: '❓ Input needed - Grand Line route planner' showing the actual question being asked"/>
+  <img src="docs/images/cowork-notification.svg?v=2" width="560" alt="Notification: '✅ Done - Wanted poster generator' with a one-sentence summary"/><br/>
+  <img src="docs/images/cowork-question.svg?v=2" width="560" alt="Notification: '❓ Input needed - Grand Line route planner' showing the actual question being asked"/>
 </p>
 
 ## What this actually does
@@ -27,7 +27,13 @@ You run Claude in several places — a terminal, the desktop app, a browser tab.
 
 ## Table of Contents
 
+  - [What this actually does](#what-this-actually-does)
   - [Claude Desktop (Cowork) support — this fork](#claude-desktop-cowork-support-this-fork)
+    - [Who can use this?](#who-can-use-this)
+    - [Setup (macOS) — no terminal or git needed](#setup-macos--no-terminal-or-git-needed)
+    - [Phone notifications in 5 minutes](#-phone-notifications-in-5-minutes)
+    - [Browser (claude.ai) notifications](#-browser-claudeai-notifications)
+    - [Troubleshooting macOS quirks](#troubleshooting-macos-quirks-worth-knowing)
   - [Features](#features)
   - [Installation](#installation)
     - [Prerequisites](#prerequisites)
@@ -139,7 +145,8 @@ flowchart LR
 
 - **Cross-platform**: macOS (Intel & Apple Silicon), Linux (x64 & ARM64), Windows 10+ (x64)
 - **Claude Desktop app (Cowork) support** *(this fork)*: conversation name in every alert, one-sentence summaries, click opens the exact conversation — [details](#claude-desktop-cowork-support-this-fork)
-- **6 notification types**: Task Complete, Review Complete, Question, Plan Ready, Session Limit, API Error
+- **8 notification types**: Done, Review done, Input needed, Needs approval *(with live Always allow / Allow once buttons)*, Plan ready, Approaching limit, Limit reached, Error
+- **Browser (claude.ai) notifications** *(this fork)*: bundled Chrome extension with exact-tab focus — [details](#-browser-claudeai-notifications)
 - **Click-to-focus** (macOS, Linux): click notification to focus the exact project window and tab — Ghostty, VS Code, iTerm2, Warp, kitty, WezTerm, Alacritty, Hyper, Apple Terminal, GNOME Terminal, Konsole, Tilix, Terminator, XFCE4 Terminal, MATE Terminal
 - **Multiplexers**: tmux (including iTerm2 -CC integration mode), zellij, WezTerm, kitty — click switches to the correct session/pane/tab
 - **Git branch in title** (terminal sessions): `✅ Done main [cat]`
@@ -157,12 +164,12 @@ flowchart LR
 
 ### Quick Install (Recommended)
 
-> **Using the Claude desktop app (Cowork)?** The quick installer downloads *upstream* release binaries, which do not include this fork's desktop-app features. Follow [the fork setup](#claude-desktop-cowork-support-this-fork) (build from source) instead.
+> **macOS users:** the two-slash-command install in [the fork setup](#setup-macos--no-terminal-or-git-needed) needs no terminal at all. **Linux/Windows users:** this fork publishes macOS binaries only — use [upstream](https://github.com/777genius/claude-notifications-go) or build from source.
 
 One command to install everything:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/777genius/claude-notifications-go/main/bin/bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/silks-road/claude-notifications-everywhere/main/bin/bootstrap.sh | bash
 ```
 
 > Windows users: open Git Bash from the Start menu and run this command there. Do not run the `curl ... | bash` command from PowerShell or Windows Terminal if `bash` opens WSL, because that targets Linux paths and binaries instead of Windows.
@@ -201,7 +208,7 @@ Run these slash commands in the Claude Code chat, not in your system terminal:
 Run the same command as for installation — it will update both the plugin and the binary:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/777genius/claude-notifications-go/main/bin/bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/silks-road/claude-notifications-everywhere/main/bin/bootstrap.sh | bash
 ```
 
 Then restart Claude Code to apply the new version. Your settings in `~/.claude/claude-notifications-go/config.json` are preserved across updates.
@@ -226,33 +233,35 @@ What each one looks like (desktop app sessions show the conversation name; the �
 
 <table>
   <tr>
-    <td><img src="docs/images/cowork-notification.svg" alt="✅ Done - task finished, one-sentence summary"/></td>
-    <td><img src="docs/images/cowork-question.svg" alt="❓ Input needed - Claude is waiting on your answer"/></td>
+    <td><img src="docs/images/cowork-notification.svg?v=2" alt="✅ Done - task finished, one-sentence summary"/></td>
+    <td><img src="docs/images/cowork-question.svg?v=2" alt="❓ Input needed - Claude is waiting on your answer"/></td>
   </tr>
   <tr>
-    <td><img src="docs/images/notif-approval.svg" alt="🔐 Needs approval - with Always allow and Allow once buttons"/></td>
-    <td><img src="docs/images/notif-plan.svg" alt="📋 Plan ready - a plan is ready for approval"/></td>
+    <td><img src="docs/images/notif-approval.svg?v=2" alt="🔐 Needs approval - with Always allow and Allow once buttons"/></td>
+    <td><img src="docs/images/notif-plan.svg?v=2" alt="📋 Plan ready - a plan is ready for approval"/></td>
   </tr>
   <tr>
-    <td><img src="docs/images/notif-usage.svg" alt="📊 Approaching limit - approaching your usage limit"/></td>
-    <td><img src="docs/images/notif-review.svg" alt="🔍 Review done - code review finished"/></td>
+    <td><img src="docs/images/notif-usage.svg?v=2" alt="📊 Approaching limit - approaching your usage limit"/></td>
+    <td><img src="docs/images/notif-review.svg?v=2" alt="🔍 Review done - code review finished"/></td>
   </tr>
   <tr>
-    <td><img src="docs/images/notif-error.svg" alt="🔴 Error - Claude stopped on an error"/></td>
-    <td><img src="docs/images/notif-limit.svg" alt="⏱️ Session Limit Reached"/></td>
+    <td><img src="docs/images/notif-error.svg?v=2" alt="🔴 Error - Claude stopped on an error"/></td>
+    <td><img src="docs/images/notif-limit.svg?v=2" alt="⏱️ Session Limit Reached"/></td>
   </tr>
 </table>
 
-Each category has its own sound, so you can tell **done** / **needs you** / **broke** / **usage** apart without looking.
+Each category has its own sound, so you can tell **done** / **input needed** / **broke** / **usage** apart without looking.
 
 | Status | Icon | Description | Trigger |
 |--------|------|-------------|---------|
-| Task Complete | ✅ | Main task completed | Stop/SubagentStop hooks (state machine detects active tools like Write/Edit/Bash, or ExitPlanMode followed by tool usage). *This fork:* reclassified as Question when the final message asks the user something ("approval needed", trailing "?") |
-| Review Complete | 🔍 | Code review finished | Stop/SubagentStop hooks (state machine detects only read-like tools: Read/Grep/Glob with no active tools, plus long text response >200 chars) |
-| Question | ❓ | Claude has a question | PreToolUse hook (AskUserQuestion) OR Notification hook |
-| Plan Ready | 📋 | Plan ready for approval | PreToolUse hook (ExitPlanMode) |
-| Session Limit Reached | ⏱️ | Session limit reached | Stop/SubagentStop hooks (state machine detects "Session limit reached" text in last 3 assistant messages) |
-| API Error | 🔴 | Authentication expired, rate limit, server error, connection error | Stop/SubagentStop hooks (state machine detects via `isApiErrorMessage` flag + `error` field from JSONL) |
+| Done | ✅ | Main task completed | Stop/SubagentStop hooks (state machine detects active tools like Write/Edit/Bash, or ExitPlanMode followed by tool usage). Reclassified as **Input needed** when the final message asks the user something ("approval needed", trailing "?") |
+| Review done | 🔍 | Code review finished | Stop/SubagentStop hooks (only read-like tools: Read/Grep/Glob, plus long text response >200 chars) |
+| Input needed | ❓ | Claude is waiting on your answer | PreToolUse hook (AskUserQuestion), Notification hook, or a completed turn whose final message asks a question |
+| Needs approval | 🔐 | Claude is waiting for tool permission — notification carries **Always allow / Allow once** buttons that answer the pending card | *This fork:* desktop app log watcher (Cowork never fires the Notification hook); CLI sessions via Notification hook |
+| Plan ready | 📋 | Plan ready for approval | PreToolUse hook (ExitPlanMode) |
+| Approaching limit | 📊 | Claude warned you are approaching a usage limit (real warning, not an estimate) | *This fork:* Stop/SubagentStop hooks, warning text in the final message |
+| Limit reached | ⏱️ | Usage limit reached | Stop/SubagentStop hooks ("Session limit reached" text in recent messages) |
+| Error | 🔴 | Authentication expired, rate limit, server error, connection error | Stop/SubagentStop hooks (`isApiErrorMessage` flag + `error` field from JSONL) |
 
 ## Platform Support
 
