@@ -72,6 +72,30 @@ Everything happens inside Claude Code or the Claude desktop app; the plugin down
 > **Prefer to delegate?** Paste this into a Claude Code / Cowork chat and let Claude do the whole thing:
 > *"Install the claude-notifications-everywhere plugin from github.com/silks-road/claude-notifications-everywhere: add its marketplace, install the plugin, then walk me through the macOS notification and accessibility permissions it needs."*
 
+### 📱 Phone notifications in 5 minutes
+
+Every notification type above — including 🔐 approvals and 📊 usage — can also reach your phone via the plugin's built-in webhooks. The quickest route is the free, open-source [ntfy.sh](https://ntfy.sh):
+
+1. Install the **ntfy** app (iOS/Android) and subscribe to a topic name you invent (make it unguessable — anyone who knows the topic can read it)
+2. Add this to your plugin config (`~/.claude/plugins/cache/claude-notifications-go/claude-notifications-go/<version>/config/config.json`):
+
+```json
+"webhook": {
+    "enabled": true,
+    "preset": "",
+    "url": "https://ntfy.sh/your_topic_name",
+    "format": "json",
+    "headers": {
+        "X-Message": "{{.message}}",
+        "X-Title": "{{.title}}",
+        "X-Priority": "{{if or (eq .status \"task_complete\") (eq .status \"review_complete\")}}3{{else}}4{{end}}",
+        "X-Template": "yes"
+    }
+},
+```
+
+Prefer Telegram, Slack, Discord, or Teams? See the [webhook docs](docs/webhooks/README.md). One honest limitation: phone alerts are **receive-only** — the approval buttons and click-to-open-conversation only work on the Mac itself.
+
 ### How click-to-conversation works
 
 ```mermaid
