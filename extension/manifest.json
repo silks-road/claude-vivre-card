@@ -2,8 +2,11 @@
   "manifest_version": 3,
   "name": "Claude Notifications (browser)",
   "version": "1.0.0",
-  "description": "Desktop notifications when Claude finishes or needs you in claude.ai — part of claude-notifications-everywhere.",
-  "permissions": ["storage", "tabs"],
+  "description": "Desktop notifications when Claude finishes or needs you in claude.ai \u2014 part of claude-notifications-everywhere.",
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
   "host_permissions": [
     "https://claude.ai/*",
     "http://127.0.0.1:52741/*"
@@ -13,13 +16,26 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://claude.ai/*"],
-      "js": ["content.js"],
+      "matches": [
+        "https://claude.ai/*"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Claude Notifications settings"
+    "default_title": "Claude Notifications settings",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   }
 }

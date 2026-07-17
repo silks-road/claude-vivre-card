@@ -8,9 +8,16 @@
 
   const STOP_SELECTOR = 'button[aria-label="Stop response"]';
 
-  // True while Claude is actively responding.
+  // True while Claude is actively responding. Two signals, either suffices:
+  // 1. A "Stop response" button (present in some UI variants).
+  // 2. Structural: every ANSWERED user message has an action bar (retry etc.)
+  //    on its response; while a response is still streaming, the newest user
+  //    message has no action bar yet — so pending = users - actionBars > 0.
   function isStreaming() {
-    return !!document.querySelector(STOP_SELECTOR);
+    if (document.querySelector(STOP_SELECTOR)) return true;
+    const users = document.querySelectorAll('[data-testid="user-message"]').length;
+    const bars = document.querySelectorAll('[data-testid="action-bar-retry"]').length;
+    return users > bars;
   }
 
   function conversationId() {
