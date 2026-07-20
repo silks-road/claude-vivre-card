@@ -30,7 +30,7 @@ You run Claude in several places — a terminal, the desktop app, a browser tab.
   - [What this actually does](#what-this-actually-does)
   - [Claude Desktop (Cowork) support — this fork](#claude-desktop-cowork-support-this-fork)
     - [Who can use this?](#who-can-use-this)
-    - [Setup (macOS) — Claude does almost everything](#setup-macos--claude-does-almost-everything)
+    - [Setup — Claude does almost everything](#setup--claude-does-almost-everything)
     - [Phone notifications in 5 minutes](#-phone-notifications-in-5-minutes)
     - [Browser (claude.ai) notifications](#-browser-claudeai-notifications)
     - [Troubleshooting macOS quirks](#troubleshooting-macos-quirks-worth-knowing)
@@ -63,7 +63,11 @@ Everything below is on top of the upstream plugin, which only knew about termina
 
 Any Claude account that can run **Claude Code** works — Pro, Max, Team, or Enterprise subscriptions, and API/Console (pay-as-you-go) users in the terminal. The **desktop app (Cowork) features need a plan that includes the Claude desktop app** (Pro and up); no separate API access is required — the plugin only reads local hook events and log files on your own machine. Free-tier accounts don't include Claude Code, so the plugin has nothing to notify about.
 
-### Setup (macOS) — Claude does almost everything
+### Setup — Claude does almost everything
+
+Pick your system: [🍎 macOS](#-macos-setup) · [🪟 Windows](#-windows-setup)
+
+#### 🍎 macOS setup
 
 No terminal, no git. Type **three commands into any Claude chat**, one at a time:
 
@@ -79,23 +83,43 @@ No terminal, no git. Type **three commands into any Claude chat**, one at a time
 
 The third command starts a **guided setup**: Claude configures everything automatable (downloads its program, starts the browser listener, generates your extension token), opens the exact Settings panes and Finder windows you need, and then **walks you through the few toggles macOS insists a human clicks** — one at a time, checking each worked. Total hands-on time: about two minutes.
 
-#### The human toggles, illustrated
+#### The human toggles, illustrated (macOS)
 
-macOS never lets software grant itself permissions (a good thing!), so these three moments are yours — setup opens each window for you and Claude talks you through them:
+macOS never lets software grant itself permissions (a good thing!), so these moments are yours — setup opens each window for you and Claude talks you through them:
+
+**1. Let banners appear** — pick style "Alerts" so they stay until clicked:
 
 <p><img src="docs/images/step-notifications.svg?v=1" width="480" alt="System Settings, Notifications, Claude Notifier: Allow, style Alerts"/></p>
 
-*Lets the banners appear. Pick style "Alerts" so they stay until clicked.*
+**2. Power click-to-conversation and the approval buttons:**
 
 <p><img src="docs/images/step-accessibility.svg?v=1" width="480" alt="System Settings, Privacy and Security, Accessibility: add and enable ClaudeNotifier.app"/></p>
 
-*Powers click-to-conversation and the Always allow / Allow once buttons.*
+**3. Do you use claude.ai in a browser?** If not, you're already done — skip this. If yes, load the bundled extension so browser chats notify too:
 
 <p><img src="docs/images/step-extension.svg?v=1" width="480" alt="chrome://extensions: Developer mode on, Load unpacked, pick the extension folder, paste token"/></p>
 
-*Only if you use claude.ai in a browser. Skip otherwise.*
-
 That's it. Ask a Claude session to do something and enjoy the ping.
+
+#### 🪟 Windows setup
+
+Same idea, fewer steps — Windows toasts need no permission grants. Type into any Claude chat, one at a time:
+
+```
+/plugin marketplace add silks-road/claude-notifications-everywhere
+```
+```
+/plugin install claude-notifications-go@claude-notifications-go
+```
+```
+/claude-notifications-go:setup
+```
+
+Setup sends a hello notification; if you see it, you're done. If you don't, one place to check:
+
+<p><img src="docs/images/step-windows-notifications.svg?v=1" width="480" alt="Windows Settings, System, Notifications: claude-notifications On, not silenced by Do Not Disturb"/></p>
+
+**What works on Windows today:** completion/question notifications with the uniform titles and sounds, terminal click-to-focus, and phone webhooks. **macOS-only for now:** desktop-app click-to-conversation, the Always allow / Allow once buttons, and the browser extension — they're on the roadmap.
 
 #### 🛠️ For tinkerers
 

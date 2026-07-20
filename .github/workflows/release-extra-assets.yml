@@ -1,0 +1,53 @@
+# Builds the non-macOS binaries this fork's releases need (Windows, Linux)
+# and attaches them to the release. macOS binaries are built and signed
+# locally; this fork has no Apple signing secrets, so upstream's full
+# release.yml cannot run here.
+name: Release extra assets
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to attach assets to (e.g. v1.41.2)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-upload:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            binary: claude-notifications-windows-amd64.exe
+            listdevices: list-devices-windows-amd64.exe
+          - os: ubuntu-latest
+            binary: claude-notifications-linux-amd64
+            listdevices: list-devices-linux-amd64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Install Linux audio headers
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libasound2-dev
+      - name: Build
+        env:
+          CGO_ENABLED: "1"
+        shell: bash
+        run: |
+          mkdir -p dist
+          go build -ldflags="-s -w" -trimpath -o "dist/${{ matrix.binary }}" ./cmd/claude-notifications
+          go build -ldflags="-s -w" -trimpath -o "dist/${{ matrix.listdevices }}" ./cmd/list-devices
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          TAG="${{ github.event.release.tag_name || github.event.inputs.tag }}"
+          gh release upload "$TAG" "dist/${{ matrix.binary }}" "dist/${{ matrix.listdevices }}" --clobber
