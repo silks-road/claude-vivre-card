@@ -64,6 +64,11 @@ async function onTurnComplete(details) {
       title: result.title || "Claude",
       message: result.message || "",
       priority: 1,
+    }, () => {
+      if (chrome.runtime.lastError) {
+        chrome.action.setBadgeText({ text: "N!" });
+        chrome.action.setBadgeBackgroundColor({ color: "#c0392b" });
+      }
     });
   }
 }

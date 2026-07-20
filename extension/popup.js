@@ -45,3 +45,27 @@ function show(msg, cls) {
   statusEl.textContent = msg;
   statusEl.className = cls;
 }
+
+
+// Test banner: isolates banner rendering from the detection/listener pipeline.
+document.getElementById("testbanner").addEventListener("click", () => {
+  const diag = document.getElementById("diag");
+  chrome.notifications.getPermissionLevel((level) => {
+    let msg = "browser permission level: " + level;
+    chrome.notifications.create("banner-test-" + Date.now(), {
+      type: "basic",
+      iconUrl: "icon128.png",
+      title: "🔔 Banner test",
+      message: "If you can read this on screen, banners work.",
+      priority: 2,
+      requireInteraction: false,
+    }, (id) => {
+      if (chrome.runtime.lastError) {
+        msg += " | create FAILED: " + chrome.runtime.lastError.message;
+      } else {
+        msg += " | create ok (id " + id + ") — if no banner appeared, macOS or Focus is suppressing this browser";
+      }
+      diag.textContent = msg;
+    });
+  });
+});
