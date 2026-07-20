@@ -78,7 +78,11 @@ func runSetup() {
 		_ = exec.Command("open", "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility").Start()
 	}
 
-	// Step 6: Focus-mode reminder (cannot be inspected programmatically).
+	// Step 6: the Claude app's own notifications cover remote Home tasks —
+	// a session type that produces no host-side signals this plugin can see.
+	fmt.Println("[you] Cowork Home tasks: System Settings > Notifications > 'Claude' (the app itself) -> Allow, style 'Alerts'. Anthropic's own channel notifies for those; this plugin covers everything else.")
+
+	// Step 7: Focus-mode reminder (cannot be inspected programmatically).
 	fmt.Println("[you] Using Focus modes? Add 'Claude' and 'Claude Notifier' to the allowed apps of the Focus you use.")
 
 	fmt.Println("── Summary ─────────────────────────────────────────────────")
