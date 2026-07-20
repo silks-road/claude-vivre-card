@@ -18,6 +18,7 @@ You run Claude in several places — a terminal, the desktop app, a browser tab.
 - 🎯 **Click lands on the exact conversation** — not just the app: it selects the right chat in the desktop app's sidebar, or focuses the right browser tab (never opening duplicates, even with split views)
 - 🔐 **Approve without opening anything** — when Claude needs permission, the notification carries **"Always allow"** and **"Allow once"** buttons that answer the real request in the app
 - 🧠 **The alert tells you what and where** — `✅ Done - Wanted poster generator` when finished; `❓ Input needed - Grand Line route planner` *with the actual question as the message* when Claude is waiting on you
+- 🤫 **Quiet when you're already there** — no ping for the conversation you're actively viewing (app or browser tab); everything else still notifies
 - 🔊 **Four sounds you learn once** — *done* / *input needed* / *broke* / *approaching limit* — so your ears triage before your eyes do
 - 📊 **Warns before you hit usage limits** — from Claude's real warnings, honestly (no invented percentages)
 
@@ -164,6 +165,7 @@ Setup (~3 minutes): run `claude-notifications install-browser-listener`, load th
 
 - **macOS re-prompts for Accessibility although the toggle is ON** — happens after the ClaudeNotifier app is rebuilt/updated: the grant is tied to the old binary's signature. Fix: System Settings → Privacy & Security → Accessibility → remove ClaudeNotifier (−), then re-add the one inside the plugin's `bin/` folder (drag it in from Finder; reveal it with `open -R <path>`).
 - **"Item from unidentified developer" notice when installing the browser listener** — that's macOS noting the locally-built binary was registered as a background service (LaunchAgent). Expected for a from-source build; the code is what you cloned.
+- **A notification pings but vanishes before you can click it** — that source's alert style is "Banners" (auto-dismiss). Set style **Alerts** in System Settings → Notifications for both **Claude Notifier** and **Claude**.
 - **Extension stops noticing turns after an update** — reload the extension card in `chrome://extensions`, then reload your claude.ai tabs (content scripts only enter pages loaded after the extension).
 
 ### How click-to-conversation works
