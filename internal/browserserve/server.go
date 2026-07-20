@@ -167,12 +167,16 @@ func (s *Server) handleEvent(w http.ResponseWriter, r *http.Request) {
 		status = analyzer.StatusTaskComplete
 	}
 
-	if err := s.notifier.SendBrowserNotification(status, ev.Title, ev.LastMessage, ev.URL); err != nil {
-		logging.Warn("browser notification failed: %v", err)
-		http.Error(w, "notify failed", http.StatusInternalServerError)
-		return
-	}
+	// The notification itself is rendered by the extension (chrome.notifications)
+	// so the click is handled inside the SAME browser/profile that ran the
+	// session — a macOS-level "open URL" would hit the default browser, which
+	// may be a different browser or Claude account entirely. The Mac side
+	// contributes the sound and the classified title/body.
+	title, body := s.notifier.BrowserNotificationContent(status, ev.Title, ev.LastMessage)
+	s.notifier.PlayStatusSound(status)
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte(`{"ok":true}`))
+	resp := map[string]any{"ok": true, "notify": true, "title": title, "message": body}
+	_ = json.NewEncoder(w).Encode(resp)
 }

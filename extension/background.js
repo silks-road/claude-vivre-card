@@ -36,13 +36,45 @@ async function onTurnComplete(details) {
     } catch (_) {}
   }
 
-  await forward({
+  const result = await forward({
     conversationId,
     title: info.title || "",
     lastMessage: info.lastMessage || "",
     url: "https://claude.ai/chat/" + conversationId,
   });
+
+  // The listener classifies and returns the uniform title/body; the
+  // notification is rendered HERE so its click is handled by THIS browser —
+  // an OS-level "open URL" would go to the default browser, which may be a
+  // different browser or a different Claude account.
+  if (result && result.notify) {
+    chrome.notifications.create("claude-chat:" + conversationId, {
+      type: "basic",
+      iconUrl: "icon128.png",
+      title: result.title || "Claude",
+      message: result.message || "",
+      priority: 1,
+    });
+  }
 }
+
+// Notification click → focus the exact tab for that conversation (or open one
+// here, never in another browser).
+chrome.notifications.onClicked.addListener(async (notifId) => {
+  if (!notifId.startsWith("claude-chat:")) return;
+  const conversationPath = "/chat/" + notifId.slice("claude-chat:".length);
+  chrome.notifications.clear(notifId);
+
+  const tabs = await chrome.tabs.query({ url: "https://claude.ai/*" });
+  const existing = tabs.find((t) => new URL(t.url).pathname === conversationPath);
+  if (existing) {
+    await chrome.tabs.update(existing.id, { active: true });
+    await chrome.windows.update(existing.windowId, { focused: true });
+  } else {
+    const tab = await chrome.tabs.create({ url: "https://claude.ai" + conversationPath });
+    await chrome.windows.update(tab.windowId, { focused: true });
+  }
+});
 
 chrome.webRequest.onCompleted.addListener((d) => {
   // Visible heartbeat: flash the badge so detection is observable without DevTools.

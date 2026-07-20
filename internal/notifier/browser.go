@@ -9,6 +9,28 @@ import (
 	"github.com/777genius/claude-notifications/internal/platform"
 )
 
+// BrowserNotificationContent returns the uniform title and summarized body
+// for a browser event without posting anything — used when the extension
+// renders the notification itself (multi-browser correctness).
+func (n *Notifier) BrowserNotificationContent(status analyzer.Status, title, message string) (string, string) {
+	statusInfo, exists := n.cfg.GetStatusInfo(string(status))
+	if !exists {
+		return title, summarizeMessage(message, status)
+	}
+	notifTitle := statusInfo.Title
+	if title != "" {
+		notifTitle = fmt.Sprintf("%s - %s", statusInfo.Title, title)
+	}
+	return notifTitle, summarizeMessage(message, status)
+}
+
+// PlayStatusSound plays the configured sound for a status (detached).
+func (n *Notifier) PlayStatusSound(status analyzer.Status) {
+	if statusInfo, ok := n.cfg.GetStatusInfo(string(status)); ok {
+		n.playSoundDetached(statusInfo.Sound)
+	}
+}
+
 // SendBrowserNotification posts a notification for a browser (claude.ai) event.
 // Unlike SendDesktop (terminal/desktop-app sessions), the click opens the chat
 // URL in the default browser. title is the conversation title, message the body
