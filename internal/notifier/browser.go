@@ -33,6 +33,19 @@ func (n *Notifier) PlayStatusSound(status analyzer.Status) {
 	}
 }
 
+// SendCoworkTaskNotification posts a ✅ Done banner for a Cowork/Home task
+// completion detected from the app log, through ClaudeNotifier, whose click
+// navigates to that conversation in the desktop app (by wrapper id).
+func (n *Notifier) SendCoworkTaskNotification(title, wrapperID string) error {
+	executeCmd := ""
+	if exe, err := os.Executable(); err == nil {
+		if exe, err = filepath.EvalSymlinks(exe); err == nil {
+			executeCmd = shellQuote(exe) + " focus-cowork " + shellQuote(wrapperID)
+		}
+	}
+	return n.sendBrowserBanner(analyzer.StatusTaskComplete, title, "Task finished.", executeCmd)
+}
+
 // SendBrowserNotificationWithClick posts a browser-event banner through
 // ClaudeNotifier (the identity users allow through macOS Focus) whose click
 // hands the conversation id back to the listener (/focus) so the extension

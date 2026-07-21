@@ -99,6 +99,9 @@ func (s *Server) ListenAndServe(port int) error {
 		return fmt.Errorf("cannot bind %s (already running?): %w", addr, err)
 	}
 	logging.Info("Browser listener started on %s", addr)
+
+	// Cover Cowork/Home tasks the hook path can't see by tailing the app log.
+	go s.WatchCoworkLog()
 	srv := &http.Server{
 		Handler:           s.withCORS(mux),
 		ReadHeaderTimeout: 5 * time.Second,

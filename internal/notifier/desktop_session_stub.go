@@ -28,6 +28,19 @@ func desktopAppIsFrontmost() bool { return false }
 // isDesktopSessionViewed is only meaningful on macOS.
 func isDesktopSessionViewed(cliSessionID string) bool { return false }
 
+// ResolveDesktopSessionByWrapper is only implemented on macOS.
+func ResolveDesktopSessionByWrapper(wrapperID string) (cliSessionID, title string) {
+	return "", ""
+}
+
+// CurrentFocusedDesktopSession is only implemented on macOS.
+func CurrentFocusedDesktopSession() string { return "" }
+
+// FocusDesktopSessionByWrapper is only implemented on macOS.
+func FocusDesktopSessionByWrapper(wrapperID string) error {
+	return fmt.Errorf("focus-cowork not supported on this platform")
+}
+
 // RespondDesktopApproval is only implemented on macOS.
 func RespondDesktopApproval(cliSessionID, scope string) error {
 	return fmt.Errorf("respond-approval not supported on this platform")

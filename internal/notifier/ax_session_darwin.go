@@ -340,7 +340,21 @@ func RespondDesktopApproval(cliSessionID, scope string) error {
 // outcome, so on any failure the behavior degrades to plain app focus.
 func FocusDesktopSessionByCLIID(cliSessionID string) error {
 	_, title := resolveDesktopSession(cliSessionID)
+	return focusDesktopByTitle(title, "cli session "+cliSessionID)
+}
 
+// FocusDesktopSessionByWrapper focuses a conversation by the desktop app's own
+// wrapper id (used for Cowork/Home task notifications, whose click has no CLI
+// id to resolve from). Presses the sidebar item matching the conversation
+// title through the Accessibility API.
+func FocusDesktopSessionByWrapper(wrapperID string) error {
+	_, title := ResolveDesktopSessionByWrapper(wrapperID)
+	return focusDesktopByTitle(title, "wrapper "+wrapperID)
+}
+
+// focusDesktopByTitle activates the Claude desktop app and presses the sidebar
+// item whose name matches title, launching the app first if needed.
+func focusDesktopByTitle(title, label string) error {
 	cBundleID := C.CString(platform.DesktopAppBundleID)
 	defer C.free(unsafe.Pointer(cBundleID))
 	pid := int(C.axSessionFindPID(cBundleID))
@@ -367,7 +381,7 @@ func FocusDesktopSessionByCLIID(cliSessionID string) error {
 	C.axSessionActivate(C.int(pid))
 
 	if title == "" {
-		return fmt.Errorf("no conversation title found for session %s", cliSessionID)
+		return fmt.Errorf("no conversation title found for %s", label)
 	}
 
 	if C.promptForAXTrust() == 0 {

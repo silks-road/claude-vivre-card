@@ -95,6 +95,41 @@ var desktopSessionsDir = func() string {
 	return filepath.Join(home, "Library", "Application Support", "Claude", "claude-code-sessions")
 }
 
+// ResolveDesktopSessionByWrapper is the inverse of resolveDesktopSession: given
+// the desktop app's own session id (the "local_..." wrapper id that appears in
+// the app log), it returns the CLI session id and the conversation title.
+// Used by the Cowork-log watcher to identify a completed session and dedupe it
+// against hook-driven notifications. Returns "","" when no record matches.
+func ResolveDesktopSessionByWrapper(wrapperID string) (cliSessionID, title string) {
+	root := desktopSessionsDir()
+	if root == "" || wrapperID == "" {
+		return "", ""
+	}
+	_ = filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+		if err != nil || d.IsDir() || !strings.HasSuffix(d.Name(), ".json") {
+			return nil
+		}
+		data, readErr := os.ReadFile(path)
+		if readErr != nil {
+			return nil
+		}
+		var rec desktopSessionRecord
+		if json.Unmarshal(data, &rec) != nil {
+			return nil
+		}
+		if rec.SessionID == wrapperID {
+			cliSessionID, title = rec.CLISessionID, rec.Title
+			return filepath.SkipAll
+		}
+		return nil
+	})
+	return cliSessionID, title
+}
+
+// CurrentFocusedDesktopSession returns the wrapper id of the conversation
+// currently shown in the desktop app (exported for the Cowork-log watcher).
+func CurrentFocusedDesktopSession() string { return currentFocusedDesktopSession() }
+
 // resolveDesktopSession maps the CLI-level session id received by hooks to
 // the desktop app's own session record: its session id (e.g.
 // "local_<other-uuid>") and the conversation title shown in the app sidebar.

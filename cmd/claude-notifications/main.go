@@ -88,6 +88,15 @@ func main() {
 			fmt.Fprintf(os.Stderr, "respond-approval: %v\n", err)
 			os.Exit(1)
 		}
+	case "focus-cowork":
+		if len(os.Args) < 3 {
+			fmt.Fprintf(os.Stderr, "Error: focus-cowork requires a wrapper session id\n")
+			os.Exit(1)
+		}
+		if err := notifier.FocusDesktopSessionByWrapper(os.Args[2]); err != nil {
+			fmt.Fprintf(os.Stderr, "focus-cowork: %v\n", err)
+			os.Exit(1)
+		}
 	case "approval-watch":
 		if len(os.Args) < 5 {
 			fmt.Fprintf(os.Stderr, "Error: approval-watch requires session id, cwd and log offset\n")
